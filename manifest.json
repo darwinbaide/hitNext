@@ -2,7 +2,7 @@
     "name": "HitNext",
     "version": "0.0.1",
     "manifest_version": 2,
-    "description": "Injecting stuff",
+    "description": "Click on the button to go to the next page at the end of the page so you can continously scroll.",
     "background": {
         "scripts": [
             "background.js"
@@ -10,7 +10,7 @@
         "persistent": true
     },
     "browser_action": {
-        "default_title": "Inject!",
+        "default_title": "Clicking",
 
         "default icon": "images/get_started16.png"
     },
