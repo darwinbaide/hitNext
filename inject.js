@@ -17,21 +17,27 @@
 
         if (offset >= height) {
             console.log('At the bottom');
-            document.getElementsByClassName("navi-change-chapter-btn-next a-h")[0].click();
+            var path = getCookie("path");
+            console.log("path: " + path);
+            console.log(document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue);
+            document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.click()
         }
     };
 
 })();
 
 
-function getElementByXpath(path) {
-    return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+function getElementsByXPath(xpath, parent) {
+    let results = [];
+    let query = document.evaluate(xpath, parent || document,
+        null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    for (let i = 0, length = query.snapshotLength; i < length; ++i) {
+        results.push(query.snapshotItem(i));
+    }
+    return results;
 }
 
 
-function setCookie() {
-    document.cookie = "username=John Doe; expires=Thu, 18 Dec 2029 12:00:00 UTC; path=/";
-}
 
 function getCookie(name) { //Gets the cookie
     var dc = document.cookie;

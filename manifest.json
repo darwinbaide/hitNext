@@ -19,6 +19,8 @@
         "js": ["inject.js"]
     }],
     "permissions": [
+        "cookies",
+        "tabs",
         "https://*/*",
         "http://*/*",
         "tabs",

@@ -7,22 +7,24 @@
     <meta name="Author" content="Darwin J. Baide">
     <!-- <link rel="stylesheet" href="css/popup.css"> -->
     <link rel="stylesheet" href="css/popup.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="js/popup.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="popup.js"></script>
 </head>
 
 <body>
-    <h2>ON/OFF</h2>
+    <div class="m-2">
+        <!-- Rounded switch -->
+        <label class="switch">
+            <input id="target1" type="checkbox">
+            <span class="slider round"></span>
+        </label>
+        <div class="btn btn-primary btn-sm " id="target2">Reset XPATH</div>
+    </div>
 
-    <!-- Rounded switch -->
-    <label class="switch">
-        <input type="checkbox">
-        <span class="slider round"></span>
-    </label> Reset Xpath
 </body>
 
-<script>
-</script>
+
 
 <style>
     .switch {
