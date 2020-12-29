@@ -21,9 +21,12 @@
     "permissions": [
         "cookies",
         "tabs",
+        "<all_urls>",
+        "storage",
         "https://*/*",
         "http://*/*",
         "tabs",
-        "activeTab"
+        "activeTab",
+        "storage"
     ]
 }

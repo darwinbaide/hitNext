@@ -3,13 +3,18 @@
 // listen for our browerAction to be clicked
 chrome.browserAction.onClicked.addListener(function(tab) {
     // for the current tab, inject the "inject.js" file & execute it
+    setCookie("path", "test");
+
     var t = getCookie("on");
     console.log(t);
     console.log(getCookie("path"));
+
+
     if (t != null) { /* if its turned on */
 
         document.getElementById("target1").checked = true; /* for continuity keep it on if the cookie says it was on before */
         var t = getCookie("path");
+        console.log("Path:  " + t);
         if (t != null) { /* if its turned on */
 
             chrome.tabs.executeScript(tab.ib, {
@@ -22,32 +27,55 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 });
 
 
-function setCookie(name, value, days) {
-    var expires = "";
-    if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+chrome.extension.onConnect.addListener(function(port) {
+    console.log("Connected .....");
+    port.onMessage.addListener(function(msg) {
+        console.log("message recieved " + msg);
+        var obj = JSON.parse(msg);
+        var type2 = obj.type;
+        if (type2 == "get") {
+            //alert("Received a GET");
+            //alert("Requested: " + obj.index);
+            var respo = getCookie(obj.index);
+
+            port.postMessage(respo);
+
+        } else if (type2 == "add") {
+
+            var key2 = obj.key;
+            var value2 = obj.value;
+            //alert("Received a ADD    KEY:   " + key2 + "    VALUE:" + value2);
+            setCookie(key2, value2);
+            port.postMessage("Added");
+
+        } else {
+            //alert("Received a DELETE");
+            deleteCookie();
+            port.postMessage("Deleted");
+        }
+    });
+});
+
+
+function deleteCookie() {
+    document.cookie = "path=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    setCookie("on", "false")
+    print("");
+}
+
+
+function setCookie(name, value) {
+    chrome.storage.sync.set({ name: value });
+    return "DONE";
+
+
 }
 
 
 function getCookie(name) { //Gets the cookie
-    var dc = document.cookie;
-    var prefix = name + "=";
-    var begin = dc.indexOf("; " + prefix);
-    if (begin == -1) {
-        begin = dc.indexOf(prefix);
-        if (begin != 0) return null;
-    } else {
-        begin += 2;
-        var end = document.cookie.indexOf(";", begin);
-        if (end == -1) {
-            end = dc.length;
-        }
-    }
-    // because unescape has been deprecated, replaced with decodeURI
-    //return unescape(dc.substring(begin + prefix.length, end));
-    return decodeURI(dc.substring(begin + prefix.length, end));
+
+
+    chrome.storage.sync.get(name, function(data) {
+        return data;
+    });
 }

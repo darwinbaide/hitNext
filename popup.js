@@ -6,8 +6,29 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById("target2").addEventListener("click", reset1);
 });
 
+var port = chrome.extension.connect({
+    name: "HitNext Communicate"
+});
+message1 = '{"type":"get", "index":"null"}'; // simple query to see if cookie exists
+port.postMessage(message1);
+port.onMessage.addListener(function(msg) {
+    console.log("message recieved" + msg);
+});
+
+
+
 function reset1() { /* Reset the path */
-    document.cookie = "path=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    //document.cookie = "path=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.getElementById("target1").checked = false;
+
+    var port = chrome.extension.connect({
+        name: "HitNext Communicate"
+    });
+    message1 = '{"type":"delete", "index":"null"}'; // simple query to see if cookie exists
+    port.postMessage(message1);
+    port.onMessage.addListener(function(msg) {
+        console.log("message recieved" + msg);
+    });
 
 }
 
@@ -16,8 +37,8 @@ function check() {
 
 
         var x = getCookie("path");
-        console.log(x);
-        setCookie("on", "true", 15);
+        console.log("path:  " + x);
+        setCookie("on", "true");
         if (x != null) {
             console.log("path found");
         } else {
@@ -28,7 +49,8 @@ function check() {
                 document.getElementById("target1").checked = false;
                 setCookie("on", "false");
             } else {
-                setCookie("path", person, 15);
+
+                setCookie("path", person);
 
             }
         }
@@ -37,32 +59,28 @@ function check() {
     }
 }
 
-function setCookie(name, value, days) {
-    var expires = "";
-    if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+function setCookie(name, value) {
+    var port = chrome.extension.connect({
+        name: "HitNext Communicate"
+    });
+    message1 = '{"type":"add", "key":"' + name + '", "value":"' + value + '"}'; // query to add cookie
+    port.postMessage(message1);
+    port.onMessage.addListener(function(msg) {
+        console.log("message recieved from Background: " + msg);
+    });
 }
 
 
 function getCookie(name) { //Gets the cookie
-    var dc = document.cookie;
-    var prefix = name + "=";
-    var begin = dc.indexOf("; " + prefix);
-    if (begin == -1) {
-        begin = dc.indexOf(prefix);
-        if (begin != 0) return null;
-    } else {
-        begin += 2;
-        var end = document.cookie.indexOf(";", begin);
-        if (end == -1) {
-            end = dc.length;
-        }
-    }
-    // because unescape has been deprecated, replaced with decodeURI
-    //return unescape(dc.substring(begin + prefix.length, end));
-    return decodeURI(dc.substring(begin + prefix.length, end));
+    var port = chrome.extension.connect({
+        name: "HitNext Communicate"
+    });
+    message1 = '{"type":"get", "index":"' + name + '"}'; // simple query to see if cookie exists
+    port.postMessage(message1);
+    port.onMessage.addListener(function(msg) {
+
+        console.log("message recieved from background: " + msg);
+
+        return msg;
+    });
 }
